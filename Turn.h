@@ -15,8 +15,10 @@ private:
 
 	char castling = 0;
 	char en_passant = -1;
-	char before_en_passant;
+	char before_en_passant = -1;
+	unsigned short before_moved_chessman_coords = 0;
 	char promotion = 0;
+	char estimate_difference = 0;
 
 	Board* board = nullptr;
 
@@ -25,9 +27,9 @@ private:
 public:
 	Turn(std::string turn, Board* _board);
 	
-	Turn(Chessman* _moved_figure, char x_st, char y_st, char x_fn, char y_fn, Board* _board);
+	Turn(Chessman* _moved_chessman, char x_st, char y_st, char x_fn, char y_fn, Board* _board);
 
-	Turn(Chessman* _moved_figure, char x_st, char y_st, char x_fn, char y_fn, char _promotion, Board* _board);
+	Turn(Chessman* _moved_chessman, char x_st, char y_st, char x_fn, char y_fn, char _promotion, Board* _board);
 
 	Turn(char _castling, Board* _board);
 
@@ -37,9 +39,17 @@ public:
 
 	bool isCheck();
 
+	unsigned short eaten_coords() {
+		if (eaten_chessman != nullptr)
+			return coords(eaten_chessman->x, eaten_chessman->y);
+		else return 10000;  //nothing was eaten
+	}
+
 	std::string name(); 
 
-	bool operator > (const Turn& turn);
+	bool operator > (const Turn &turn);  //for sorting forced moves
+
+	bool operator < (const Turn &turn);  //for sorting other moves
 
 	friend int main();
 };

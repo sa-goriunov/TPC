@@ -21,30 +21,50 @@ void Board::printTest() {
 
 int main() {
 	Game a;
-	srand(time(NULL));
 	a.__board__->printTest();
 	deque<Board::Turn> history;
 
 
-	for (int i = 0; i < 6; i++) {
+	for (int i = 0; i < 10; i++) {
 		string hod;
 		cin >> hod;
 		Board::Turn t(hod, a.__board__);
 		t();
-		cout << endl << (int)t.before_en_passant << ' ' << (int)t.en_passant << endl;
+		cout << (int)a.__board__->pawns[0] << ' ' << (int)a.__board__->pawns[0] << ' ' << (int)a.__board__->pieces[0] << ' '
+			<< (int)a.__board__->pieces[1] << endl;
 		history.push_front(t);
 		a.__board__->printTest();
 		cout << endl;
 
-		Game::GenerateMoves my_moves;
-		my_moves(a.__board__);
+		Game::GenerateForcedMoves my_forced_moves(a.__board__);
+		my_forced_moves();
+		Game::GenerateMoves my_moves(a.__board__);
+		my_moves();
 		
-		Board::Turn answer = my_moves.turns[(rand()) % my_moves.turns.size()];
-		answer();
-		cout << answer.name() << endl;
-		cout << endl << (int)answer.before_en_passant << ' ' << (int)answer.en_passant << endl;
-		history.push_front(t);
-		a.__board__->printTest();
+		for (int i = 0; i < my_forced_moves.turns.size(); i++)
+			my_forced_moves.pick(i);
+		for (int i = 0; i < my_moves.turns.size(); i++)
+			my_moves.pick(i);
+
+		if (my_forced_moves.turns.empty()){
+			Board::Turn answer = my_moves.turns[0];
+			answer();
+			cout << answer.name() << endl;
+			cout << (int)a.__board__->pawns[0] << ' ' << (int)a.__board__->pawns[0] << ' ' << (int)a.__board__->pieces[0] << ' '
+				<< (int)a.__board__->pieces[1] << endl;
+			a.__board__->printTest();
+			history.push_front(answer);
+		}
+		else {
+			Board::Turn answer = my_forced_moves.turns[0];
+			answer();
+			cout << answer.name() << endl;
+			cout << (int)a.__board__->pawns[0] << ' ' << (int)a.__board__->pawns[0] << ' ' << (int)a.__board__->pieces[0] << ' '
+				<< (int)a.__board__->pieces[1] << endl;
+			a.__board__->printTest();
+			history.push_front(answer);
+		}
+
 		cout << endl;
 	}
 

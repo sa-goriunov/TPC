@@ -17,3 +17,7 @@ Board::Board(std::vector<char> _board, std::vector<Chessman> white, std::vector<
 		zobrist = zobrist xor KEY[i.id - 1][BLACK_][i.x][i.y];
 	}
 }
+
+bool Board::isEndgame() {
+	return (pieces[WHITE_] + pieces[BLACK_]) <= 6;
+}

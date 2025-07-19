@@ -1,15 +1,15 @@
 #include "Board.h"
 
-bool subcheck(char x, char y, char kings_x, char kings_y, const Board* board) {
+bool subcheck(char x, char y, char checking_x, char checking_y, const Board* board) {
 	char dx, dy;
-	if (x != kings_x) { dx = (x - kings_x) / abs(x - kings_x); }
+	if (x != checking_x) { dx = (x - checking_x) / abs(x - checking_x); }
 	else { dx = 0; }
-	if (y != kings_y) { dy = (y - kings_y) / abs(y - kings_y); }
+	if (y != checking_y) { dy = (y - checking_y) / abs(y - checking_y); }
 	else { dy = 0; }
 
 	bool tmp = true;
-	for (int i = 1; i < std::max(abs(x - kings_x), abs(y - kings_y)); i++) {
-		tmp = tmp && (board->board[coords(kings_x + i * dx, kings_y + i * dy)] == VOID);
+	for (int i = 1; i < std::max(abs(x - checking_x), abs(y - checking_y)); i++) {
+		tmp = tmp && (board->board[coords(checking_x + i * dx, checking_y + i * dy)] == VOID);
 		if (not(tmp)) return tmp;
 	}
 

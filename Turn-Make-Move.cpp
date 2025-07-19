@@ -59,6 +59,7 @@ void Board::Turn::operator()() {
 		board->board[coords(x_start, y_start)] = VOID;
 		board->zobrist = board->zobrist xor KEY[moved_chessman->id - 1][same(board->color_turn)][x_start][y_start];
 		moved_chessman->x = x_finish; moved_chessman->y = y_finish;
+		before_moved_chessman_coords = board->last_moving_chessman_coords;
 		board->last_moving_chessman_coords = coords(x_finish, y_finish);
 		if (promotion != 0) {
 			moved_chessman->id = promotion;
@@ -66,6 +67,8 @@ void Board::Turn::operator()() {
 		if (eaten_chessman != nullptr) {
 			board->board[coords(eaten_chessman->x, eaten_chessman->y)] = VOID;
 			eaten_chessman->enabled = false;
+			if (eaten_chessman->id == PAWN) board->pawns[same(board->color_turn)]--;
+			else board->pieces[same(board->color_turn)]--;
 			board->zobrist = board->zobrist 
 				xor KEY[eaten_chessman->id - 1][invert(board->color_turn)][eaten_chessman->x][eaten_chessman->y];
 		}
@@ -138,9 +141,12 @@ void Board::Turn::unmake() {
 		}
 		board->board[coords(x_start, y_start)] = moved_chessman_id;
 		moved_chessman->x = x_start; moved_chessman->y = y_start;
+		board->last_moving_chessman_coords = before_moved_chessman_coords;
 		if (eaten_chessman != nullptr) {
 			board->board[coords(eaten_chessman->x, eaten_chessman->y)] = (char)(-board->color_turn * eaten_chessman->id);
 			eaten_chessman->enabled = true;
+			if (eaten_chessman->id == PAWN) board->pawns[same(board->color_turn)]++;
+			else board->pieces[same(board->color_turn)]++;
 			board->zobrist = board->zobrist
 				xor KEY[eaten_chessman->id - 1][invert(board->color_turn)][eaten_chessman->x][eaten_chessman->y];
 		}

@@ -1,3 +1,4 @@
+#include "Sort-Defines.h"
 #include "Turn.h"
 
 Board::Turn::Turn(std::string turn, Board* _board) {
@@ -42,9 +43,9 @@ Board::Turn::Turn(std::string turn, Board* _board) {
 	}
 }
 
-Board::Turn::Turn(Chessman* _moved_figure, char x_st, char y_st, char x_fn, char y_fn, Board* _board) {
+Board::Turn::Turn(Chessman* _moved_chessman, char x_st, char y_st, char x_fn, char y_fn, Board* _board) {
 	board = _board;
-	moved_chessman = _moved_figure;
+	moved_chessman = _moved_chessman;
 	moved_chessman_id = board->board[coords(x_st, y_st)];
 	x_start = x_st;
 	y_start = y_st;
@@ -57,11 +58,49 @@ Board::Turn::Turn(Chessman* _moved_figure, char x_st, char y_st, char x_fn, char
 	before_en_passant = _board->en_passant;
 
 	eaten_chessman = findEatenChessman(finish_id, x_finish, y_finish);
+
+	if(eaten_chessman == nullptr){
+		switch (moved_chessman->id) {
+		case PAWN:
+			if (board->color_turn == WHITE)
+				estimate_difference = white_pawn_estimate[estimate_coords(x_fn, y_fn)] - white_pawn_estimate[estimate_coords(x_st, y_st)];
+			else
+				estimate_difference = black_pawn_estimate[estimate_coords(x_fn, y_fn)] - black_pawn_estimate[estimate_coords(x_st, y_st)];
+			break;
+		case KNIGHT:
+			estimate_difference = knight_estimate[estimate_coords(x_fn, y_fn)] - knight_estimate[estimate_coords(x_st, y_st)];
+			break;
+		case BISHOP:
+			estimate_difference = bishop_estimate[estimate_coords(x_fn, y_fn)] - bishop_estimate[estimate_coords(x_st, y_st)];
+			break;
+		case ROOK: {
+			char opponents_kings_x = board->chessmen[invert(board->color_turn)][0].x;
+			char opponents_kings_y = board->chessmen[invert(board->color_turn)][0].y;
+			char x1 = x_st - opponents_kings_x; char y1 = y_st - opponents_kings_y;
+			char x2 = x_fn - opponents_kings_x; char y2 = y_fn - opponents_kings_y;
+			estimate_difference = rook_estimate[check_coords(x2, y2)] - rook_estimate[check_coords(x1, y1)];
+			break;}
+		case QUEEN: {
+			char opponents_kings_x = board->chessmen[invert(board->color_turn)][0].x;
+			char opponents_kings_y = board->chessmen[invert(board->color_turn)][0].y;
+			char x1 = x_st - opponents_kings_x; char y1 = y_st - opponents_kings_y;
+			char x2 = x_fn - opponents_kings_x; char y2 = y_fn - opponents_kings_y;
+			estimate_difference = queen_estimate[check_coords(x2, y2)] - queen_estimate[check_coords(x1, y1)];
+			break;}
+		case KING:
+			if(board->isEndgame())
+				estimate_difference = late_king_estimate[estimate_coords(x_fn, y_fn)] - late_king_estimate[estimate_coords(x_st, y_st)];
+			else
+				estimate_difference = early_king_estimate[estimate_coords(x_fn, y_fn)] - early_king_estimate[estimate_coords(x_st, y_st)];
+			break;
+		default: estimate_difference = 0;
+		}
+	}
 }
 
-Board::Turn::Turn(Chessman* _moved_figure, char x_st, char y_st, char x_fn, char y_fn, char _promotion, Board* _board) {
+Board::Turn::Turn(Chessman* _moved_chessman, char x_st, char y_st, char x_fn, char y_fn, char _promotion, Board* _board) {
 	board = _board;
-	moved_chessman = _moved_figure;
+	moved_chessman = _moved_chessman;
 	moved_chessman_id = board->board[coords(x_st, y_st)];
 	x_start = x_st;
 	y_start = y_st;
@@ -79,6 +118,12 @@ Board::Turn::Turn(char _castling, Board* _board) {
 	board = _board;
 	castling = _castling;
 	before_en_passant = _board->en_passant;
+
+	switch (castling) {
+	case SHORT_CASTLING: estimate_difference = 20; break;
+	case LONG_CASTLING: estimate_difference = 15; break;
+	default: estimate_difference = 0;
+	}
 }
 
 Chessman* Board::Turn::findEatenChessman(char id, char x, char y) {
@@ -92,7 +137,7 @@ Chessman* Board::Turn::findEatenChessman(char id, char x, char y) {
 	} else if ((moved_chessman->id == PAWN) && (x_start != x_finish)) {
 		for (int i = 8; i < NUMBER_OF_CHESSMEN; i++) {
 			Chessman* tmp = &board->chessmen[color][i];
-			if ((x_finish == tmp->x) && ((y_finish - 1) == tmp->y) && (tmp->enabled)) {
+			if ((x_finish == tmp->x) && (((y_finish - 1) == tmp->y) || ((y_finish + 1) == tmp->y)) && (tmp->enabled)) {
 				return tmp;
 			}}
 	}
