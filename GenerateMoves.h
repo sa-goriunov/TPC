@@ -1,20 +1,22 @@
 #pragma once
-#include "Turn.h"
+#include "Game.h"
 
-class Board::GenerateMoves {
+class Game::GenerateMoves {
 private:
-	std::vector<Turn> turns;
+	std::vector<Board::Turn> turns;
 
-	void operator()(Board *board, char en_passant);
-
-	//~GenerateMoves();
+	void sortMoves(Board *board);
 
 	friend int main();
+public:
+	void operator()(Board *board);
+	
 };
 
-class Board::GenerateForcedMoves {
+class Game::GenerateForcedMoves {
 private:
-	std::vector<Turn> turns;
+	std::vector<Board::Turn> turns;
 
-	void operator()(Board* board);
+public:
+	void operator()(Board *board);
 };

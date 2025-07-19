@@ -15,25 +15,21 @@ private:
 
 	char castling = 0;
 	char en_passant = -1;
+	char before_en_passant;
 	char promotion = 0;
 
 	Board* board = nullptr;
 
 	Chessman* findEatenChessman(char id, char x, char y);
 
+public:
+	Turn(std::string turn, Board* _board);
 	
-
 	Turn(Chessman* _moved_figure, char x_st, char y_st, char x_fn, char y_fn, Board* _board);
 
 	Turn(Chessman* _moved_figure, char x_st, char y_st, char x_fn, char y_fn, char _promotion, Board* _board);
 
 	Turn(char _castling, Board* _board);
-
-	friend GenerateMoves;
-	friend class Board::GenerateForcedMoves;
-	friend int main();
-public:
-	Turn(std::string turn, Board* _board);
 
 	void operator()();
 
@@ -42,4 +38,8 @@ public:
 	bool isCheck();
 
 	std::string name(); 
+
+	bool operator > (const Turn& turn);
+
+	friend int main();
 };

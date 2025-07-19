@@ -13,6 +13,7 @@ void Board::Turn::operator()() {
 			board->zobrist = board->zobrist xor KEY[KING - 1][WHITE_][4][0] xor KEY[KING - 1][WHITE_][6][0]
 				xor KEY[ROOK - 1][WHITE_][7][0] xor KEY[ROOK - 1][WHITE_][5][0];
 			board->history.push_front(board->zobrist);
+			board->last_moving_chessman_coords = 0;
 		}
 		else {
 			board->board[30] = VOID;
@@ -24,6 +25,7 @@ void Board::Turn::operator()() {
 			board->zobrist = board->zobrist xor KEY[KING - 1][BLACK_][4][7] xor KEY[KING - 1][BLACK_][6][7]
 				xor KEY[ROOK - 1][BLACK_][7][7] xor KEY[ROOK - 1][BLACK_][5][7];
 			board->history.push_front(board->zobrist);
+			board->last_moving_chessman_coords = 0;
 		}
 		break;
 	case LONG_CASTLING: 
@@ -37,6 +39,7 @@ void Board::Turn::operator()() {
 			board->zobrist = board->zobrist xor KEY[KING - 1][WHITE_][4][0] xor KEY[KING - 1][WHITE_][2][0]
 				xor KEY[ROOK - 1][WHITE_][0][0] xor KEY[ROOK - 1][WHITE_][3][0];
 			board->history.push_front(board->zobrist);
+			board->last_moving_chessman_coords = 0;
 		}
 		else {
 			board->board[30] = VOID;
@@ -48,6 +51,7 @@ void Board::Turn::operator()() {
 			board->zobrist = board->zobrist xor KEY[KING - 1][BLACK_][4][7] xor KEY[KING - 1][BLACK_][2][7]
 				xor KEY[ROOK - 1][BLACK_][0][7] xor KEY[ROOK - 1][BLACK_][3][7];
 			board->history.push_front(board->zobrist);
+			board->last_moving_chessman_coords = 0;
 		}
 		break;
 	default:
@@ -55,6 +59,7 @@ void Board::Turn::operator()() {
 		board->board[coords(x_start, y_start)] = VOID;
 		board->zobrist = board->zobrist xor KEY[moved_chessman->id - 1][same(board->color_turn)][x_start][y_start];
 		moved_chessman->x = x_finish; moved_chessman->y = y_finish;
+		board->last_moving_chessman_coords = coords(x_finish, y_finish);
 		if (promotion != 0) {
 			moved_chessman->id = promotion;
 		}
@@ -68,12 +73,13 @@ void Board::Turn::operator()() {
 		board->zobrist = board->zobrist xor KEY[moved_chessman->id - 1][same(board->color_turn)][x_finish][y_finish];
 		board->history.push_front(board->zobrist);
 	}
-
+	board->en_passant = en_passant;
 	board->color_turn *= (-1);
 }
 
 void Board::Turn::unmake() {
 	board->color_turn *= (char)(-1);
+	board->en_passant = before_en_passant;
 
 	switch (castling) {
 	case SHORT_CASTLING: 

@@ -2,6 +2,7 @@
 
 Board::Turn::Turn(std::string turn, Board* _board) {
 	board = _board;
+	before_en_passant = _board->en_passant;
 	if ((turn == "O-O") || (turn == "o-o") || (turn == "0-0")) castling = SHORT_CASTLING;
 	else if ((turn == "O-O-O") || (turn == "o-o-o") || (turn == "0-0-0")) castling = LONG_CASTLING;
 	else {
@@ -53,6 +54,7 @@ Board::Turn::Turn(Chessman* _moved_figure, char x_st, char y_st, char x_fn, char
 	finish_id = board->board[coords(x_finish, y_finish)];
 
 	if ((moved_chessman->id == PAWN) && (((y_start == 1) && (y_finish == 3)) || ((y_start == 6) && (y_finish == 4)))) en_passant = x_finish;
+	before_en_passant = _board->en_passant;
 
 	eaten_chessman = findEatenChessman(finish_id, x_finish, y_finish);
 }
@@ -65,6 +67,7 @@ Board::Turn::Turn(Chessman* _moved_figure, char x_st, char y_st, char x_fn, char
 	y_start = y_st;
 	x_finish = x_fn;
 	y_finish = y_fn;
+	before_en_passant = _board->en_passant;
 	promotion = _promotion;
 
 	finish_id = board->board[coords(x_finish, y_finish)];
@@ -75,18 +78,20 @@ Board::Turn::Turn(Chessman* _moved_figure, char x_st, char y_st, char x_fn, char
 Board::Turn::Turn(char _castling, Board* _board) {
 	board = _board;
 	castling = _castling;
+	before_en_passant = _board->en_passant;
 }
 
 Chessman* Board::Turn::findEatenChessman(char id, char x, char y) {
+	char color = invert(board->color_turn);
 	if (id != VOID) {
 		for (int i = 0; i < NUMBER_OF_CHESSMEN; i++) {
-			Chessman* tmp = &board->chessmen[invert(board->color_turn)][i];
+			Chessman* tmp = &board->chessmen[color][i];
 			if ((tmp->x == x_finish) && (tmp->y == y_finish) && (tmp->enabled)) {
 				return tmp;
 			}}
 	} else if ((moved_chessman->id == PAWN) && (x_start != x_finish)) {
 		for (int i = 8; i < NUMBER_OF_CHESSMEN; i++) {
-			Chessman* tmp = &board->chessmen[invert(board->color_turn)][i];
+			Chessman* tmp = &board->chessmen[color][i];
 			if ((x_finish == tmp->x) && ((y_finish - 1) == tmp->y) && (tmp->enabled)) {
 				return tmp;
 			}}

@@ -1,6 +1,6 @@
 #include "GenerateMoves.h"
 #include "Generate-Defines.h"
 
-void Board::GenerateForcedMoves::operator()(Board* board) {
+void Game::GenerateForcedMoves::operator()(Board* board) {
 
 }
