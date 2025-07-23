@@ -3,14 +3,14 @@
 
 int Board::assess() {
 	
-	if (!chessmen[WHITE_][0].enabled) return -_INFINITY_;
-	if (!chessmen[BLACK_][1].enabled) return _INFINITY_;
+//	if (!chessmen[WHITE_][0].enabled) return -_INFINITY_;
+//	if (!chessmen[BLACK_][1].enabled) return _INFINITY_;
 
 	int res = 0;
 
 	for (auto i : chessmen[0]) {
 		if (i.enabled){
-			res += value_of_chessman[i.id - 1];
+			res += value_of_chessman[i.id];
 			switch (i.id) {
 			case PAWN:
 				res += white_pawn_assess[estimate_coords(i.x, i.y)]; break;
@@ -42,7 +42,7 @@ int Board::assess() {
 
 	for (auto i : chessmen[1]) {
 		if (i.enabled) {
-			res -= value_of_chessman[i.id - 1];
+			res -= value_of_chessman[i.id];
 			switch (i.id) {
 			case PAWN:
 				res -= black_pawn_assess[estimate_coords(i.x, i.y)]; break;

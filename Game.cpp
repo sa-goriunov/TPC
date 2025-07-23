@@ -71,8 +71,8 @@ Game::Game(int a) {
 
 	std::vector<Chessman> black = {
 		{KING, 7, 7}, {QUEEN, 2, 7}, {ROOK, 3, 2}, {BISHOP, 6, 6},
-		{PAWN, 0, 6}, {PAWN, 6, 5}, {PAWN, 7, 5}, /**//*{PAWN, 5, 5},
-		{PAWN, 0, 6}, {PAWN, 1, 6}, {PAWN, 2, 6}, {PAWN, 3, 6},
+		{PAWN, 0, 6}, {PAWN, 6, 5}, {PAWN, 7, 5}, /**///{PAWN, 5, 5},
+/*		{PAWN, 0, 6}, {PAWN, 1, 6}, {PAWN, 2, 6}, {PAWN, 3, 6},
 		{PAWN, 4, 6}, {PAWN, 5, 6}, {PAWN, 6, 6}, {PAWN, 7, 6}
 	};
 
