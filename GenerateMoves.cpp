@@ -93,24 +93,24 @@ void Game::GenerateMoves::operator()() {
 				if (color == WHITE_) {
 					if ((board->board[114] == KING_NM) && (board->board[117] == ROOK_NM) &&
 						(board->board[115] == VOID) && (board->board[116] == VOID)
-						&& supercheck(4, 0, BLACK, board) && supercheck(5, 0, BLACK, board)) {
+						&& board->supercheck(4, 0) && board->supercheck(5, 0)) {
 						turns.push_back(Board::Turn(SHORT_CASTLING, board));
 					}
 					if ((board->board[114] == KING_NM) && (board->board[110] == ROOK_NM) &&
 						(board->board[111] == VOID) && (board->board[112] == VOID) && (board->board[113] == VOID)
-						&& supercheck(4, 0, BLACK, board) && supercheck(3, 0, BLACK, board)) {
+						&& board->supercheck(4, 0) && board->supercheck(3, 0)) {
 						turns.push_back(Board::Turn(LONG_CASTLING, board));
 					}
 				}
 				else {
 					if ((board->board[30] == BLACK*KING_NM) && (board->board[33] == BLACK*ROOK_NM) &&
 						(board->board[31] == VOID) && (board->board[32] == VOID)
-						&& supercheck(4, 7, WHITE, board) && supercheck(5, 7, WHITE, board)) {
+						&& board->supercheck(4, 7) && board->supercheck(5, 7)) {
 						turns.push_back(Board::Turn(SHORT_CASTLING, board));
 					}
 					if ((board->board[30] == BLACK * KING_NM) && (board->board[26] == BLACK * ROOK_NM) &&
 						(board->board[27] == VOID) && (board->board[28] == VOID) && (board->board[29] == VOID)
-						&& supercheck(4, 7, WHITE, board) && supercheck(3, 7, WHITE, board)) {
+						&& board->supercheck(4, 7) && board->supercheck(3, 7)) {
 						turns.push_back(Board::Turn(LONG_CASTLING, board));
 					}
 				}

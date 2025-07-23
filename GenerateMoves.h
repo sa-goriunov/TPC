@@ -3,12 +3,12 @@
 
 class Game::GenerateMoves {
 private:
-	std::vector<Board::Turn> turns;
-
 	Board *board;
 	friend int main();
 public:
 	void operator()();
+
+	std::vector<Board::Turn> turns;
 
 	void pick(int iteration);
 
@@ -19,16 +19,19 @@ public:
 
 class Game::GenerateForcedMoves {
 private:
-	std::vector<Board::Turn> turns;
+	
 
 	Board *board;
 	friend int main();
 public:
 	void pick(int iteration);
 
+	std::vector<Board::Turn> turns;
+
 	void operator()();
 
 	GenerateForcedMoves(Board *_board) {
 		board = _board;
+	
 	}
 };

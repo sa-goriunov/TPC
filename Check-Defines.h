@@ -2,11 +2,6 @@
 
 constexpr auto KING_POSITION = 112;
 
-class Chessman; class Board;
-bool subcheck(char x, char y, char kings_x, char kings_y, const Board* board);
-bool check(const Chessman* checking_chessman, char checking_x, char checking_y, char color_of_checking_party, const Board* board);
-bool supercheck(char checking_x, char checking_y, char color_of_checking_party, Board* board);
-
 inline int check_coords(char x, char y) {
 	return KING_POSITION + (int)x - (int)y * 15;
 }

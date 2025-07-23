@@ -96,6 +96,9 @@ Board::Turn::Turn(Chessman* _moved_chessman, char x_st, char y_st, char x_fn, ch
 		default: estimate_difference = 0;
 		}
 	}
+	else {
+		estimate_difference = eaten_chessman->id - moved_chessman->id;
+	}
 }
 
 Board::Turn::Turn(Chessman* _moved_chessman, char x_st, char y_st, char x_fn, char y_fn, char _promotion, Board* _board) {
@@ -112,6 +115,8 @@ Board::Turn::Turn(Chessman* _moved_chessman, char x_st, char y_st, char x_fn, ch
 	finish_id = board->board[coords(x_finish, y_finish)];
 
 	eaten_chessman = findEatenChessman(finish_id, x_finish, y_finish);
+	
+	estimate_difference = _promotion;
 }
 
 Board::Turn::Turn(char _castling, Board* _board) {
@@ -181,6 +186,5 @@ std::string Board::Turn::name() {
 bool Board::Turn::isCheck() {
 	if (castling != 0) return false;
 
-	return check(moved_chessman, board->chessmen[same(board->color_turn)][0].x, board->chessmen[same(board->color_turn)][0].y,
-		-board->color_turn, board);
+	return board->check(moved_chessman, board->chessmen[same(board->color_turn)][0].x, board->chessmen[same(board->color_turn)][0].y);
 }

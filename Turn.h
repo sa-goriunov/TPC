@@ -47,9 +47,7 @@ public:
 
 	std::string name(); 
 
-	bool operator > (const Turn &turn);  //for sorting forced moves
-
-	bool operator < (const Turn &turn);  //for sorting other moves
+	bool operator < (const Turn &turn);
 
 	friend int main();
 };
