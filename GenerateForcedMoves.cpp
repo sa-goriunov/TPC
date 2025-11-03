@@ -16,15 +16,27 @@ void Game::GenerateForcedMoves::operator()() {
 							turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x, tmp->y + 1, BISHOP, board));
 							turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x, tmp->y + 1, KNIGHT, board));
 						}
-					if (board->board[coords(tmp->x + 1, tmp->y + 1)] < 0)
-						turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x + 1, tmp->y + 1, board));
-					if (board->board[coords(tmp->x - 1, tmp->y + 1)] < 0)
-						turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x - 1, tmp->y + 1, board));
+					if (board->board[coords(tmp->x + 1, tmp->y + 1)] < 0) {
+						if (tmp->y == 6) {
+							turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x + 1, tmp->y + 1, QUEEN, board));
+							turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x + 1, tmp->y + 1, ROOK, board));
+							turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x + 1, tmp->y + 1, BISHOP, board));
+							turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x + 1, tmp->y + 1, KNIGHT, board));
+						} else turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x + 1, tmp->y + 1, board));
+					}
+					if (board->board[coords(tmp->x - 1, tmp->y + 1)] < 0) {
+						if (tmp->y == 6) {
+							turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x - 1, tmp->y + 1, QUEEN, board));
+							turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x - 1, tmp->y + 1, ROOK, board));
+							turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x - 1, tmp->y + 1, BISHOP, board));
+							turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x - 1, tmp->y + 1, KNIGHT, board));
+						} else turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x - 1, tmp->y + 1, board));
+					}
 					if (board->en_passant > -1) {
-						if ((tmp->x + 1 == board->en_passant) && (board->board[coords(tmp->x + 1, tmp->y)] == BLACK * PAWN)) {
+						if ((tmp->x + 1 == board->en_passant) && (tmp->y == 4)) {
 							turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x + 1, tmp->y + 1, board));
 						}
-						else if ((tmp->x - 1 == board->en_passant) && (board->board[coords(tmp->x - 1, tmp->y)] == BLACK * PAWN)) {
+						else if ((tmp->x - 1 == board->en_passant) && (tmp->y == 4)) {
 							turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x - 1, tmp->y + 1, board));
 						}
 					}
@@ -36,15 +48,27 @@ void Game::GenerateForcedMoves::operator()() {
 							turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x, tmp->y - 1, BISHOP, board));
 							turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x, tmp->y - 1, KNIGHT, board));
 						}
-					if ((board->board[coords(tmp->x + 1, tmp->y - 1)] > 0) && (board->board[coords(tmp->x + 1, tmp->y - 1)] != OUTSIDE))
-						turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x + 1, tmp->y - 1, board));
-					if ((board->board[coords(tmp->x - 1, tmp->y - 1)] > 0) && (board->board[coords(tmp->x - 1, tmp->y - 1)] != OUTSIDE))
-						turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x - 1, tmp->y - 1, board));
+					if ((board->board[coords(tmp->x + 1, tmp->y - 1)] > 0) && (board->board[coords(tmp->x + 1, tmp->y - 1)] != OUTSIDE)){
+						if (tmp->y == 1) {
+							turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x + 1, tmp->y - 1, QUEEN, board));
+							turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x + 1, tmp->y - 1, ROOK, board));
+							turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x + 1, tmp->y - 1, BISHOP, board));
+							turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x + 1, tmp->y - 1, KNIGHT, board));
+						} else turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x + 1, tmp->y - 1, board));
+					}
+					if ((board->board[coords(tmp->x - 1, tmp->y - 1)] > 0) && (board->board[coords(tmp->x - 1, tmp->y - 1)] != OUTSIDE)) {
+						if (tmp->y == 1) {
+							turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x - 1, tmp->y - 1, QUEEN, board));
+							turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x - 1, tmp->y - 1, ROOK, board));
+							turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x - 1, tmp->y - 1, BISHOP, board));
+							turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x - 1, tmp->y - 1, KNIGHT, board));
+						} else turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x - 1, tmp->y - 1, board));
+					}
 					if (board->en_passant > -1) {
-						if ((tmp->x + 1 == board->en_passant) && (board->board[coords(tmp->x + 1, tmp->y)] == PAWN)) {
+						if ((tmp->x + 1 == board->en_passant) && (tmp->y == 3)) {
 							turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x + 1, tmp->y - 1, board));
 						}
-						else if ((tmp->x - 1 == board->en_passant) && (board->board[coords(tmp->x - 1, tmp->y)] == PAWN)) {
+						else if ((tmp->x - 1 == board->en_passant) && (tmp->y == 3)) {
 							turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x - 1, tmp->y - 1, board));
 						}
 					}

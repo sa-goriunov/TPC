@@ -21,12 +21,13 @@ constexpr auto LONG_CASTLING = 2;
 
 constexpr auto NUMBER_OF_CHESSMEN = 16;
 
+//TODO:  0&88
 inline int coords(char x, char y){
 	return (9 - (int)y) * 12 + (int)x + 2;
 }
 
 inline char invert(char color) {
-	return (color + 1) / 2;;
+	return (color + 1) / 2;
 }
 
 inline char same(char color) {

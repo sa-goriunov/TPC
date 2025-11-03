@@ -155,7 +155,7 @@ std::string Board::Turn::name() {
 	std::string name = "";
 
 	switch (castling) {
-	case 1: name = "_O-O_"; break;
+	case 1: name = "O-O"; break;
 	case 2: name = "O-O-O"; break;
 	default:
 		switch (moved_chessman->id) {
@@ -174,10 +174,10 @@ std::string Board::Turn::name() {
 
 		switch (promotion) {
 		case VOID: break;
-		case QUEEN: name += 'Q'; break;
-		case BISHOP: name += 'B'; break;
-		case KNIGHT: name += 'N'; break;
-		case ROOK: name += 'R'; break;
+		case QUEEN: name += 'Q'; name[0] = 'P'; break;
+		case BISHOP: name += 'B'; name[0] = 'P'; break;
+		case KNIGHT: name += 'N'; name[0] = 'P'; break;
+		case ROOK: name += 'R'; name[0] = 'P'; break;
 		}
 	}
 	return name;
