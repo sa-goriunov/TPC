@@ -1,35 +1,35 @@
 #pragma once
 
-constexpr auto WHITE = (char)1;
-constexpr auto BLACK = (char)-1;
+constexpr int8_t WHITE = 1;
+constexpr int8_t BLACK = -1;
 
 enum Pieces {
-KING = (char)6,
-QUEEN = (char)5,
-ROOK = (char)4,
-BISHOP = (char)3,
-KNIGHT = (char)2,
-PAWN = (char)1,
-VOID = (char)0,
-KING_NM = (char)16,  //not moved
-ROOK_NM = (char)14,  //not moved;
-OUTSIDE = (char)42
+KING = (int8_t)6,
+QUEEN = (int8_t)5,
+ROOK = (int8_t)4,
+BISHOP = (int8_t)3,
+KNIGHT = (int8_t)2,
+PAWN = (int8_t)1,
+VOID = (int8_t)0,
+KING_NM = (int8_t)16,  //not moved
+ROOK_NM = (int8_t)14,  //not moved;
+OUTSIDE = (int8_t)42
 };
 
-constexpr auto SHORT_CASTLING = 1;
-constexpr auto LONG_CASTLING = 2;
+constexpr uint8_t SHORT_CASTLING = 1;
+constexpr uint8_t LONG_CASTLING = 2;
 
-constexpr auto NUMBER_OF_CHESSMEN = 16;
+constexpr uint8_t NUMBER_OF_CHESSMEN = 16;
 
 //TODO:  0&88
 inline int coords(char x, char y){
 	return (9 - (int)y) * 12 + (int)x + 2;
 }
 
-inline char invert(char color) {
-	return (color + 1) / 2;
+inline int8_t invert(uint8_t color) {
+	return (-color & (uint8_t)2) >> 1;
 }
 
-inline char same(char color) {
-	return (-color + 1) / 2;
+inline int8_t same(uint8_t color) {
+	return (color & (uint8_t)2) >> 1;
 }
