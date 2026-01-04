@@ -11,7 +11,7 @@ private:
 
 	int DEPTH = 6, MAX_DEPTH = 10;
 
-	char my_color;
+	int8_t my_color;
 	std::vector<Board::Turn> history;
 
 	class GenerateMoves;
@@ -30,7 +30,7 @@ public:
 
 	std::string play(std::string opponents_turn);
 
-	void setColor(char color) {
+	void setColor(int8_t color) {
 		my_color = color;
 	}
 

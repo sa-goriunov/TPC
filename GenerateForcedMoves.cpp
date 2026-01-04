@@ -1,6 +1,8 @@
 #include "GenerateMoves.h"
 #include "Generate-Defines.h"
 
+#include <iostream>
+
 void Game::GenerateForcedMoves::operator()() {
 	char color = same(board->color_turn);
 	for (int i = 0; i < NUMBER_OF_CHESSMEN; i++) {
@@ -10,92 +12,82 @@ void Game::GenerateForcedMoves::operator()() {
 
 			case PAWN:
 				if (color == WHITE_) {
-					if ((tmp->y == 6) && (board->board[coords(tmp->x, tmp->y + 1)] == VOID)) {
-							turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x, tmp->y + 1, QUEEN, board));
-							turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x, tmp->y + 1, ROOK, board));
-							turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x, tmp->y + 1, BISHOP, board));
-							turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x, tmp->y + 1, KNIGHT, board));
-						}
-					if (board->board[coords(tmp->x + 1, tmp->y + 1)] < 0) {
-						if (tmp->y == 6) {
-							turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x + 1, tmp->y + 1, QUEEN, board));
-							turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x + 1, tmp->y + 1, ROOK, board));
-							turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x + 1, tmp->y + 1, BISHOP, board));
-							turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x + 1, tmp->y + 1, KNIGHT, board));
-						} else turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x + 1, tmp->y + 1, board));
+					if ((tmp->x <= 23) && (board->board[(uint8_t)(tmp->x - 16)] == VOID)) {
+							turns.push_back(Board::Turn(tmp, tmp->x, tmp->x - 16, QUEEN, board));
+							turns.push_back(Board::Turn(tmp, tmp->x, tmp->x - 16, ROOK, board));
+							turns.push_back(Board::Turn(tmp, tmp->x, tmp->x - 16, BISHOP, board));
+							turns.push_back(Board::Turn(tmp, tmp->x, tmp->x - 16, KNIGHT, board));
 					}
-					if (board->board[coords(tmp->x - 1, tmp->y + 1)] < 0) {
-						if (tmp->y == 6) {
-							turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x - 1, tmp->y + 1, QUEEN, board));
-							turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x - 1, tmp->y + 1, ROOK, board));
-							turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x - 1, tmp->y + 1, BISHOP, board));
-							turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x - 1, tmp->y + 1, KNIGHT, board));
-						} else turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x - 1, tmp->y + 1, board));
+					if (board->board[(uint8_t)(tmp->x - 15)] < 0) {
+						if (tmp->x <= 23) {
+							turns.push_back(Board::Turn(tmp, tmp->x, tmp->x - 15, QUEEN, board));
+							turns.push_back(Board::Turn(tmp, tmp->x, tmp->x - 15, ROOK, board));
+							turns.push_back(Board::Turn(tmp, tmp->x, tmp->x - 15, BISHOP, board));
+							turns.push_back(Board::Turn(tmp, tmp->x, tmp->x - 15, KNIGHT, board));
+						} else turns.push_back(Board::Turn(tmp, tmp->x, tmp->x - 15, board));
 					}
-					if (board->en_passant > -1) {
-						if ((tmp->x + 1 == board->en_passant) && (tmp->y == 4)) {
-							turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x + 1, tmp->y + 1, board));
-						}
-						else if ((tmp->x - 1 == board->en_passant) && (tmp->y == 4)) {
-							turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x - 1, tmp->y + 1, board));
-						}
+					if (board->board[(uint8_t)(tmp->x - 17)] < 0) {
+						if (tmp->x <= 23) {
+							turns.push_back(Board::Turn(tmp, tmp->x, tmp->x - 17, QUEEN, board));
+							turns.push_back(Board::Turn(tmp, tmp->x, tmp->x - 17, ROOK, board));
+							turns.push_back(Board::Turn(tmp, tmp->x, tmp->x - 17, BISHOP, board));
+							turns.push_back(Board::Turn(tmp, tmp->x, tmp->x - 17, KNIGHT, board));
+						} else turns.push_back(Board::Turn(tmp, tmp->x, tmp->x - 17, board));
 					}
+					if (tmp->x + 1 == board->en_passant)
+						turns.push_back(Board::Turn(tmp, tmp->x, tmp->x - 15, board));
+					if (tmp->x - 1 == board->en_passant)
+						turns.push_back(Board::Turn(tmp, tmp->x, tmp->x - 17, board));
 				}
 				else {
-					if ((tmp->y == 1)&&(board->board[coords(tmp->x, tmp->y - 1)] == VOID)) {
-							turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x, tmp->y - 1, QUEEN, board));
-							turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x, tmp->y - 1, ROOK, board));
-							turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x, tmp->y - 1, BISHOP, board));
-							turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x, tmp->y - 1, KNIGHT, board));
-						}
-					if ((board->board[coords(tmp->x + 1, tmp->y - 1)] > 0) && (board->board[coords(tmp->x + 1, tmp->y - 1)] != OUTSIDE)){
-						if (tmp->y == 1) {
-							turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x + 1, tmp->y - 1, QUEEN, board));
-							turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x + 1, tmp->y - 1, ROOK, board));
-							turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x + 1, tmp->y - 1, BISHOP, board));
-							turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x + 1, tmp->y - 1, KNIGHT, board));
-						} else turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x + 1, tmp->y - 1, board));
+					if ((tmp->x >= 96) && (board->board[(uint8_t)(tmp->x + 16)] == VOID)) {
+							turns.push_back(Board::Turn(tmp, tmp->x, tmp->x + 16, QUEEN, board));
+							turns.push_back(Board::Turn(tmp, tmp->x, tmp->x + 16, ROOK, board));
+							turns.push_back(Board::Turn(tmp, tmp->x, tmp->x + 16, BISHOP, board));
+							turns.push_back(Board::Turn(tmp, tmp->x, tmp->x + 16, KNIGHT, board));
 					}
-					if ((board->board[coords(tmp->x - 1, tmp->y - 1)] > 0) && (board->board[coords(tmp->x - 1, tmp->y - 1)] != OUTSIDE)) {
-						if (tmp->y == 1) {
-							turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x - 1, tmp->y - 1, QUEEN, board));
-							turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x - 1, tmp->y - 1, ROOK, board));
-							turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x - 1, tmp->y - 1, BISHOP, board));
-							turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x - 1, tmp->y - 1, KNIGHT, board));
-						} else turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x - 1, tmp->y - 1, board));
+					if ((board->board[(uint8_t)(tmp->x + 17)] > 0) && (board->board[(uint8_t)(tmp->x + 17)] != OUTSIDE)){
+						if (tmp->x >= 96) {
+							turns.push_back(Board::Turn(tmp, tmp->x, tmp->x + 17, QUEEN, board));
+							turns.push_back(Board::Turn(tmp, tmp->x, tmp->x + 17, ROOK, board));
+							turns.push_back(Board::Turn(tmp, tmp->x, tmp->x + 17, BISHOP, board));
+							turns.push_back(Board::Turn(tmp, tmp->x, tmp->x + 17, KNIGHT, board));
+						} else turns.push_back(Board::Turn(tmp, tmp->x, tmp->x + 17, board));
 					}
-					if (board->en_passant > -1) {
-						if ((tmp->x + 1 == board->en_passant) && (tmp->y == 3)) {
-							turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x + 1, tmp->y - 1, board));
-						}
-						else if ((tmp->x - 1 == board->en_passant) && (tmp->y == 3)) {
-							turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x - 1, tmp->y - 1, board));
-						}
+					if ((board->board[(uint8_t)(tmp->x + 15)] > 0) && (board->board[(uint8_t)(tmp->x + 15)] != OUTSIDE)) {
+						if (tmp->x >= 96) {
+							turns.push_back(Board::Turn(tmp, tmp->x, tmp->x + 15, QUEEN, board));
+							turns.push_back(Board::Turn(tmp, tmp->x, tmp->x + 15, ROOK, board));
+							turns.push_back(Board::Turn(tmp, tmp->x, tmp->x + 15, BISHOP, board));
+							turns.push_back(Board::Turn(tmp, tmp->x, tmp->x + 15, KNIGHT, board));
+						} else turns.push_back(Board::Turn(tmp, tmp->x, tmp->x + 15, board));
 					}
+					if (tmp->x + 1 == board->en_passant)
+						turns.push_back(Board::Turn(tmp, tmp->x, tmp->x + 17, board));
+					if (tmp->x - 1 == board->en_passant)
+						turns.push_back(Board::Turn(tmp, tmp->x, tmp->x + 15, board));
 				}
 				break;
 
 			case KNIGHT:
-				for (auto i : knight_moves) {
-					char tmp2 = board->board[coords(tmp->x + i[0], tmp->y + i[1])];
+				for (int8_t i : knight_moves) {
+					int8_t tmp2 = board->board[(uint8_t)(tmp->x + i)];
 					if ((tmp2 != OUTSIDE) && (board->color_turn * tmp2 < 0))
-						turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x + i[0], tmp->y + i[1], board));
+						turns.push_back(Board::Turn(tmp, tmp->x, tmp->x + i, board));
 				}
 				break;
 
 			case BISHOP:
-				for (auto i : bishop_moves) {
-					bool clear_line = true; char j = 1;
+				for (int8_t i : bishop_moves) {
+					bool clear_line = true; int8_t j = 1;
 					while (clear_line) {
-						char tmp2 = board->board[coords(tmp->x + j * i[0], tmp->y + j * i[1])];
+						int8_t tmp2 = board->board[(uint8_t)(tmp->x + j * i)];
 						switch (tmp2) {
-						case OUTSIDE:
-							clear_line = false; break;
-						case VOID: 
-							j++; break;
+						case OUTSIDE: clear_line = false; break;
+						case VOID: j++; break;
 						default:
 							if (board->color_turn * tmp2 < 0) {
-								turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x + j * i[0], tmp->y + j * i[1], board));
+								turns.push_back(Board::Turn(tmp, tmp->x, tmp->x + j * i, board));
 								clear_line = false;
 								break;
 							}
@@ -109,18 +101,17 @@ void Game::GenerateForcedMoves::operator()() {
 				break;
 
 			case ROOK:
-				for (auto i : rook_moves) {
-					bool clear_line = true; char j = 1;
+				for (int8_t i : rook_moves) {
+					bool clear_line = true; int8_t j = 1;
 					while (clear_line) {
-						char tmp2 = board->board[coords(tmp->x + j * i[0], tmp->y + j * i[1])];
+						int8_t tmp2 = board->board[(uint8_t)(tmp->x + j * i)];
 						switch (tmp2) {
-						case OUTSIDE: clear_line = false; break;
-						case VOID:
-							j++;
-							break;
+						case OUTSIDE: 
+							clear_line = false; break;
+						case VOID: j++; break;
 						default:
 							if (board->color_turn * tmp2 < 0) {
-								turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x + j * i[0], tmp->y + j * i[1], board));
+								turns.push_back(Board::Turn(tmp, tmp->x, tmp->x + j * i, board));
 								clear_line = false;
 								break;
 							}
@@ -134,18 +125,16 @@ void Game::GenerateForcedMoves::operator()() {
 				break;
 
 			case QUEEN:
-				for (auto i : queen_moves) {
-					bool clear_line = true; char j = 1;
+				for (int8_t i : queen_moves) {
+					bool clear_line = true; int8_t j = 1;
 					while (clear_line) {
-						char tmp2 = board->board[coords(tmp->x + j * i[0], tmp->y + j * i[1])];
+						int8_t tmp2 = board->board[(uint8_t)(tmp->x + j * i)];
 						switch (tmp2) {
 						case OUTSIDE: clear_line = false; break;
-						case VOID:
-							j++;
-							break;
+						case VOID: j++; break;
 						default:
 							if (board->color_turn * tmp2 < 0) {
-								turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x + j * i[0], tmp->y + j * i[1], board));
+								turns.push_back(Board::Turn(tmp, tmp->x, tmp->x + j * i, board));
 								clear_line = false;
 								break;
 							}
@@ -159,10 +148,10 @@ void Game::GenerateForcedMoves::operator()() {
 				break;
 
 			case KING:
-				for (auto i : king_moves) {
-					char tmp2 = board->board[coords(tmp->x + i[0], tmp->y + i[1])];
+				for (int8_t i : king_moves) {
+					int8_t tmp2 = board->board[(uint8_t)(tmp->x + i)];
 					if ((tmp2 != OUTSIDE) && (board->color_turn * tmp2 < 0)) {
-							turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x + i[0], tmp->y + i[1], board));
+							turns.push_back(Board::Turn(tmp, tmp->x, tmp->x + i, board));
 					}
 				}
 				break;

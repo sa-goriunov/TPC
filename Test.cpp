@@ -9,10 +9,10 @@ using namespace std;
 
 void Board::printTest() {
 
-	for (int i = 2; i < 10; i++) {
-		for (int j = 2; j < 10; j++)
+	for (int i = 0; i < 8; i++) {
+		for (int j = 0; j < 8; j++)
 		{
-			cout.width(3); cout << (int)board[i * 12 + j] << " ";
+			cout.width(3); cout << (int)board[i * 16 + j] << " ";
 		}
 		cout << endl;
 	}

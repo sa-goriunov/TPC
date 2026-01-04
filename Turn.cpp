@@ -1,5 +1,6 @@
 #include "Sort-Defines.h"
 #include "Turn.h"
+#include <string>
 
 Board::Turn::Turn(std::string turn, Board* _board) {
 	board = _board;
@@ -7,24 +8,22 @@ Board::Turn::Turn(std::string turn, Board* _board) {
 	if ((turn == "O-O") || (turn == "o-o") || (turn == "0-0")) castling = SHORT_CASTLING;
 	else if ((turn == "O-O-O") || (turn == "o-o-o") || (turn == "0-0-0")) castling = LONG_CASTLING;
 	else {
-		x_start = turn[0] - 'a';
-		y_start = turn[1] - '1';
-		x_finish = turn[2] - 'a';
-		y_finish = turn[3] - '1';
+		x_start = (turn[0] - 'a') + 16*('8' - turn[1]);
+		x_finish = (turn[2] - 'a') + 16*('8' - turn[3]);
 
 		int color = same(board->color_turn);
 		for (int i = 0; i < NUMBER_OF_CHESSMEN; i++) {
 			Chessman *tmp = &board->chessmen[color][i];
-			if ((tmp->x == x_start) && (tmp->y == y_start) && (tmp->enabled)) {
+			if ((tmp->x == x_start) && (tmp->enabled)) {
 				moved_chessman = tmp; break;
 			}}
 
-		moved_chessman_id = board->board[coords(x_start, y_start)];
-		finish_id = board->board[coords(x_finish, y_finish)];
+		moved_chessman_id = board->board[x_start];
+		finish_id = board->board[x_finish];
 
 		if(moved_chessman->id == PAWN){
-			if (((y_start == 1) && (y_finish == 3)) || ((y_start == 6) && (y_finish == 4))) { en_passant = x_finish; }
-			else if ((y_finish == 0) || (y_finish == 7)) {
+			if (((x_start >= 96) && (x_finish <= 71) && (x_finish >= 64)) || ((x_start <= 23) && (x_finish <= 55) && (x_finish >= 48))) { en_passant = x_finish; }
+			else if ((x_finish >= 112) || (x_finish <= 7)) {
 					switch (turn[4]) {
 					case 'Q': promotion = QUEEN; break;
 					case 'q': promotion = QUEEN; break;
@@ -38,60 +37,59 @@ Board::Turn::Turn(std::string turn, Board* _board) {
 					}
 		}}
 
-		eaten_chessman = findEatenChessman(finish_id, x_finish, y_finish);
+		eaten_chessman = findEatenChessman(finish_id, x_finish);
 
 	}
 }
 
-Board::Turn::Turn(Chessman* _moved_chessman, char x_st, char y_st, char x_fn, char y_fn, Board* _board) {
+Board::Turn::Turn(Chessman* _moved_chessman, uint8_t x_st, uint8_t x_fn, Board* _board) {
 	board = _board;
 	moved_chessman = _moved_chessman;
-	moved_chessman_id = board->board[coords(x_st, y_st)];
+	moved_chessman_id = board->board[x_st];
 	x_start = x_st;
-	y_start = y_st;
 	x_finish = x_fn;
-	y_finish = y_fn;
 
-	finish_id = board->board[coords(x_finish, y_finish)];
+	finish_id = board->board[x_finish];
 
-	if ((moved_chessman->id == PAWN) && (((y_start == 1) && (y_finish == 3)) || ((y_start == 6) && (y_finish == 4)))) en_passant = x_finish;
+	if ((moved_chessman->id == PAWN) &&
+		(((x_start >= 96) && (x_finish <= 71) && (x_finish >= 64)) || ((x_start <= 23) && (x_finish <= 55) && (x_finish >= 48))))
+	{ en_passant = x_finish; }
+
 	before_en_passant = _board->en_passant;
 
-	eaten_chessman = findEatenChessman(finish_id, x_finish, y_finish);
+	eaten_chessman = findEatenChessman(finish_id, x_finish);
 
 	if(eaten_chessman == nullptr){
 		switch (moved_chessman->id) {
 		case PAWN:
 			if (board->color_turn == WHITE)
-				estimate_difference = white_pawn_estimate[estimate_coords(x_fn, y_fn)] - white_pawn_estimate[estimate_coords(x_st, y_st)];
+				estimate_difference = white_pawn_estimate[x_fn] - white_pawn_estimate[x_st];
 			else
-				estimate_difference = black_pawn_estimate[estimate_coords(x_fn, y_fn)] - black_pawn_estimate[estimate_coords(x_st, y_st)];
+				estimate_difference = black_pawn_estimate[x_fn] - black_pawn_estimate[x_st];
 			break;
 		case KNIGHT:
-			estimate_difference = knight_estimate[estimate_coords(x_fn, y_fn)] - knight_estimate[estimate_coords(x_st, y_st)];
+			estimate_difference = knight_estimate[x_fn] - knight_estimate[x_st];
 			break;
 		case BISHOP:
-			estimate_difference = bishop_estimate[estimate_coords(x_fn, y_fn)] - bishop_estimate[estimate_coords(x_st, y_st)];
+			estimate_difference = bishop_estimate[x_fn] - bishop_estimate[x_st];
 			break;
 		case ROOK: {
-			char opponents_kings_x = board->chessmen[invert(board->color_turn)][0].x;
-			char opponents_kings_y = board->chessmen[invert(board->color_turn)][0].y;
-			char x1 = x_st - opponents_kings_x; char y1 = y_st - opponents_kings_y;
-			char x2 = x_fn - opponents_kings_x; char y2 = y_fn - opponents_kings_y;
-			estimate_difference = rook_estimate[check_coords(x2, y2)] - rook_estimate[check_coords(x1, y1)];
+			uint8_t opponents_kings_x = board->chessmen[invert(board->color_turn)][0].x;
+			uint8_t x1 = x_st - opponents_kings_x;
+			uint8_t x2 = x_fn - opponents_kings_x;
+			estimate_difference = rook_estimate[check_coord(x2)] - rook_estimate[check_coord(x1)];
 			break;}
 		case QUEEN: {
-			char opponents_kings_x = board->chessmen[invert(board->color_turn)][0].x;
-			char opponents_kings_y = board->chessmen[invert(board->color_turn)][0].y;
-			char x1 = x_st - opponents_kings_x; char y1 = y_st - opponents_kings_y;
-			char x2 = x_fn - opponents_kings_x; char y2 = y_fn - opponents_kings_y;
-			estimate_difference = queen_estimate[check_coords(x2, y2)] - queen_estimate[check_coords(x1, y1)];
+			uint8_t opponents_kings_x = board->chessmen[invert(board->color_turn)][0].x;
+			uint8_t x1 = x_st - opponents_kings_x;
+			uint8_t x2 = x_fn - opponents_kings_x;
+			estimate_difference = queen_estimate[check_coord(x2)] - queen_estimate[check_coord(x1)];
 			break;}
 		case KING:
 			if(board->isEndgame())
-				estimate_difference = late_king_estimate[estimate_coords(x_fn, y_fn)] - late_king_estimate[estimate_coords(x_st, y_st)];
+				estimate_difference = late_king_estimate[x_fn] - late_king_estimate[x_st];
 			else
-				estimate_difference = early_king_estimate[estimate_coords(x_fn, y_fn)] - early_king_estimate[estimate_coords(x_st, y_st)];
+				estimate_difference = early_king_estimate[x_fn] - early_king_estimate[x_st];
 			break;
 		default: estimate_difference = 0;
 		}
@@ -101,25 +99,23 @@ Board::Turn::Turn(Chessman* _moved_chessman, char x_st, char y_st, char x_fn, ch
 	}
 }
 
-Board::Turn::Turn(Chessman* _moved_chessman, char x_st, char y_st, char x_fn, char y_fn, char _promotion, Board* _board) {
+Board::Turn::Turn(Chessman* _moved_chessman, uint8_t x_st, uint8_t x_fn, int8_t _promotion, Board* _board) {
 	board = _board;
 	moved_chessman = _moved_chessman;
-	moved_chessman_id = board->board[coords(x_st, y_st)];
+	moved_chessman_id = board->board[x_st];
 	x_start = x_st;
-	y_start = y_st;
 	x_finish = x_fn;
-	y_finish = y_fn;
 	before_en_passant = _board->en_passant;
 	promotion = _promotion;
 
-	finish_id = board->board[coords(x_finish, y_finish)];
+	finish_id = board->board[x_finish];
 
-	eaten_chessman = findEatenChessman(finish_id, x_finish, y_finish);
+	eaten_chessman = findEatenChessman(finish_id, x_finish);
 	
 	estimate_difference = _promotion;
 }
 
-Board::Turn::Turn(char _castling, Board* _board) {
+Board::Turn::Turn(uint8_t _castling, Board* _board) {
 	board = _board;
 	castling = _castling;
 	before_en_passant = _board->en_passant;
@@ -131,18 +127,18 @@ Board::Turn::Turn(char _castling, Board* _board) {
 	}
 }
 
-Chessman* Board::Turn::findEatenChessman(char id, char x, char y) {
+Chessman* Board::Turn::findEatenChessman(uint8_t id, uint8_t x) {
 	char color = invert(board->color_turn);
 	if (id != VOID) {
 		for (int i = 0; i < NUMBER_OF_CHESSMEN; i++) {
 			Chessman* tmp = &board->chessmen[color][i];
-			if ((tmp->x == x_finish) && (tmp->y == y_finish) && (tmp->enabled)) {
+			if ((tmp->x == x_finish) && (tmp->enabled)) {
 				return tmp;
 			}}
-	} else if ((moved_chessman->id == PAWN) && (x_start != x_finish)) {
+	} else if ((moved_chessman->id == PAWN) && (abs(x_start - before_en_passant) == 1) && (abs(x_finish - before_en_passant) == 16)) {
 		for (int i = 8; i < NUMBER_OF_CHESSMEN; i++) {
 			Chessman* tmp = &board->chessmen[color][i];
-			if ((x_finish == tmp->x) && (((y_finish - 1) == tmp->y) || ((y_finish + 1) == tmp->y)) && (tmp->enabled)) {
+			if ((abs(x_finish - tmp->x) == 16) && (tmp->enabled)) {
 				return tmp;
 			}}
 	}
@@ -150,6 +146,16 @@ Chessman* Board::Turn::findEatenChessman(char id, char x, char y) {
 
 	return nullptr;
 }
+
+const std::string names[] =
+{  "a8", "b8", "c8", "d8", "e8", "f8", "g8", "h8",	"", "", "", "", "", "", "", "",
+   "a7", "b7", "c7", "d7", "e7", "f7", "g7", "h7",	"", "", "", "", "", "", "", "",
+   "a6", "b6", "c6", "d6", "e6", "f6", "g6", "h6",	"", "", "", "", "", "", "", "",
+   "a5", "b5", "c5", "d5", "e5", "f5", "g5", "h5",	"", "", "", "", "", "", "", "",
+   "a4", "b4", "c4", "d4", "e4", "f4", "g4", "h4",	"", "", "", "", "", "", "", "",
+   "a3", "b3", "c3", "d3", "e3", "f3", "g3", "h3",	"", "", "", "", "", "", "", "",
+   "a2", "b2", "c2", "d2", "e2", "f2", "g2", "h2",	"", "", "", "", "", "", "", "",
+   "a1", "b1", "c1", "d1", "e1", "f1", "g1", "h1",	"", "", "", "", "", "", "", "" };
 
 std::string Board::Turn::name() {
 	std::string name = "";
@@ -167,24 +173,23 @@ std::string Board::Turn::name() {
 		case 6: name += "K"; break;
 		}
 
-		name += (x_start + 'a');
-		name += (y_start + '1');
-		name += (x_finish + 'a');
-		name += (y_finish + '1');
+		name += names[x_start];
+		name += names[x_finish];
 
 		switch (promotion) {
 		case VOID: break;
-		case QUEEN: name += 'Q'; name[0] = 'P'; break;
+		case QUEEN:  name += 'Q'; name[0] = 'P'; break;
 		case BISHOP: name += 'B'; name[0] = 'P'; break;
 		case KNIGHT: name += 'N'; name[0] = 'P'; break;
-		case ROOK: name += 'R'; name[0] = 'P'; break;
+		case ROOK:   name += 'R'; name[0] = 'P'; break;
+		default: break;
 		}
 	}
 	return name;
 }
 
 bool Board::Turn::isCheck() {
-	if (castling != 0) return false;
+	if (castling != UNDEFINED) return false;
 
-	return board->check(moved_chessman, board->chessmen[same(board->color_turn)][0].x, board->chessmen[same(board->color_turn)][0].y);
+	return board->check(moved_chessman, board->chessmen[same(board->color_turn)][0].x);
 }

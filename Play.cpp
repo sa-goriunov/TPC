@@ -15,7 +15,7 @@ std::string Game::play(std::string opponents_turn) {
 	}
 
 	GenerateForcedMoves forced_moves(__board__); GenerateMoves other_moves(__board__);
-	Board::Turn best_turn(31, __board__);
+	Board::Turn best_turn(UNDEFINED, __board__);
 	//std::vector<Board> boards_for_forced_moves, boards_for_other_moves;
 	
 	int depth = DEPTH - 1; int ply = 0;

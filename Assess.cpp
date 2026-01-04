@@ -13,28 +13,26 @@ int Board::assess() {
 			res += value_of_chessman[i.id];
 			switch (i.id) {
 			case PAWN:
-				res += white_pawn_assess[estimate_coords(i.x, i.y)]; break;
+				res += white_pawn_assess[i.x]; break;
 			case KNIGHT:
-				res += knight_assess[estimate_coords(i.x, i.y)]; break;
+				res += knight_assess[i.x]; break;
 			case BISHOP:
-				res += bishop_assess[estimate_coords(i.x, i.y)]; break;
+				res += bishop_assess[i.x]; break;
 			case ROOK: {
-				char x = i.x - chessmen[BLACK_][0].x;
-				char y = i.y - chessmen[BLACK_][0].y;
-				res += rook_assess[check_coords(x, y)];
+				int8_t x = i.x - chessmen[BLACK_][0].x;
+				res += rook_assess[check_coord(x)];
 				break;
 			}
 			case QUEEN: {
-				char x = i.x - chessmen[1][0].x;
-				char y = i.y - chessmen[1][0].y;
-				res += queen_assess[check_coords(x, y)];
+				int8_t x = i.x - chessmen[1][0].x;
+				res += queen_assess[check_coord(x)];
 				break;
 			}
 			case KING:
 				if (isEndgame())
-					res += late_king_assess[estimate_coords(i.x, i.y)];
+					res += late_king_assess[i.x];
 				else
-					res += early_king_assess[estimate_coords(i.x, i.y)];
+					res += early_king_assess[i.x];
 				break;
 			}
 		}
@@ -45,28 +43,26 @@ int Board::assess() {
 			res -= value_of_chessman[i.id];
 			switch (i.id) {
 			case PAWN:
-				res -= black_pawn_assess[estimate_coords(i.x, i.y)]; break;
+				res -= black_pawn_assess[i.x]; break;
 			case KNIGHT:
-				res -= knight_assess[estimate_coords(i.x, i.y)]; break;
+				res -= knight_assess[i.x]; break;
 			case BISHOP:
-				res -= bishop_assess[estimate_coords(i.x, i.y)]; break;
+				res -= bishop_assess[i.x]; break;
 			case ROOK: {
-				char x = i.x - chessmen[WHITE_][0].x;
-				char y = i.y - chessmen[WHITE_][0].y;
-				res -= rook_assess[check_coords(x, y)];
+				int8_t x = i.x - chessmen[WHITE_][0].x;
+				res -= rook_assess[check_coord(x)];
 				break;
 			}
 			case QUEEN: {
-				char x = i.x - chessmen[WHITE_][0].x;
-				char y = i.y - chessmen[WHITE_][0].y;
-				res -= queen_assess[check_coords(x, y)];
+				int8_t x = i.x - chessmen[WHITE_][0].x;
+				res -= queen_assess[check_coord(x)];
 				break;
 			}
 			case KING:
 				if (isEndgame())
-					res -= late_king_assess[estimate_coords(i.x, i.y)];
+					res -= late_king_assess[i.x];
 				else
-					res -= early_king_assess[estimate_coords(i.x, i.y)];
+					res -= early_king_assess[i.x];
 				break;
 			}
 		}

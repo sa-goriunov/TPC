@@ -97,8 +97,8 @@ std::cout << moves.turns[i].isCheck() << std::endl;
 	}
 
 	if ((res == -(_INFINITY_ - (ply + 1)))
-		&& !(board->supercheck(board->chessmen[WHITE_][0].x, board->chessmen[WHITE_][0].y) ||
-			board->supercheck(board->chessmen[BLACK_][0].x, board->chessmen[BLACK_][0].y)))
+		&& !(board->supercheck(board->chessmen[WHITE_][0].x) ||
+			board->supercheck(board->chessmen[BLACK_][0].x)))
 		res = 0;
 	return res;
 }

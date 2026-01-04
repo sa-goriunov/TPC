@@ -3,35 +3,33 @@
 
 class Board::Turn {
 private:
-	char moved_chessman_id = 0;
-	char x_start = 0;
-	char y_start = 0;
-	char x_finish = 0;
-	char y_finish = 0;
-	char finish_id = 0;
+	uint8_t moved_chessman_id = 0;
+	uint8_t x_start = 0;
+	uint8_t x_finish = 0;
+	uint8_t finish_id = 0;
 
 	Chessman* moved_chessman = nullptr;
 	Chessman* eaten_chessman = nullptr;
 
-	char castling = 0;
-	char en_passant = -1;
-	char before_en_passant = -1;
-	unsigned short before_moved_chessman_coords = 0;
-	char promotion = 0;
-	char estimate_difference = 0;
+	uint8_t castling = UNDEFINED;
+	uint8_t en_passant = UNDEFINED;
+	uint8_t before_en_passant = UNDEFINED;
+	uint8_t before_moved_chessman_coord = UNDEFINED;
+	int8_t promotion = VOID;
+	int estimate_difference = 0;
 
 	Board* board = nullptr;
 
-	Chessman* findEatenChessman(char id, char x, char y);
+	Chessman* findEatenChessman(uint8_t id, uint8_t x);
 
 public:
 	Turn(std::string turn, Board* _board);
 	
-	Turn(Chessman* _moved_chessman, char x_st, char y_st, char x_fn, char y_fn, Board* _board);
+	Turn(Chessman* _moved_chessman, uint8_t x_st, uint8_t x_fn, Board* _board);
 
-	Turn(Chessman* _moved_chessman, char x_st, char y_st, char x_fn, char y_fn, char _promotion, Board* _board);
+	Turn(Chessman* _moved_chessman, uint8_t x_st, uint8_t x_fn, int8_t _promotion, Board* _board);
 
-	Turn(char _castling, Board* _board);
+	Turn(uint8_t _castling, Board* _board);
 
 	void operator()();
 
@@ -39,10 +37,10 @@ public:
 
 	bool isCheck();
 
-	unsigned short eaten_coords() {
+	uint8_t eaten_coord() {
 		if (eaten_chessman != nullptr)
-			return coords(eaten_chessman->x, eaten_chessman->y);
-		else return 10000;  //nothing was eaten
+			return eaten_chessman->x;
+		else return UNDEFINED;  //nothing was eaten
 	}
 
 	std::string name(); 

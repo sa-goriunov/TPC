@@ -8,7 +8,7 @@ void Game::GenerateForcedMoves::pick(int iteration) {
   if(iteration == 0){
 		int best_move_pos = iteration;
 		for (int i = iteration + 1; i < turns.size(); i++) {
-			if (turns[i].eaten_coords() == board->last_moving_chessman_coords) {
+			if (turns[i].eaten_coord() == board->last_moving_chessman_coord) {
 				best_move_pos = i;
 				break; 
 			} 

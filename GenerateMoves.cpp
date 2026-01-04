@@ -10,39 +10,39 @@ void Game::GenerateMoves::operator()() {
 
 			case PAWN:
 				if (color == WHITE_) {
-					if ((board->board[coords(tmp->x, tmp->y + 1)] == VOID) && (tmp->y != 6))
-						if ((tmp->y == 1) && (board->board[coords(tmp->x, tmp->y + 2)] == VOID)) {
-							turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x, tmp->y + 2, board));
-							turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x, tmp->y + 1, board));
+					if ((board->board[(uint8_t)(tmp->x - 16)] == VOID) && (tmp->x > 23))
+						if ((tmp->x >= 96) && (board->board[tmp->x - 32] == VOID)) {
+							turns.push_back(Board::Turn(tmp, tmp->x, tmp->x - 32, board));
+							turns.push_back(Board::Turn(tmp, tmp->x, tmp->x - 16, board));
 						}
-						else { turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x, tmp->y + 1, board)); }
+						else turns.push_back(Board::Turn(tmp, tmp->x, tmp->x - 16, board));
 				}
 				else {
-					if ((board->board[coords(tmp->x, tmp->y - 1)] == VOID) && (tmp->y != 1))
-						if ((tmp->y == 6) && (board->board[coords(tmp->x, tmp->y - 2)] == VOID)) {
-							turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x, tmp->y - 2, board));
-							turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x, tmp->y - 1, board));
+					if ((board->board[(uint8_t)(tmp->x + 16)] == VOID) && (tmp->x < 96))
+						if ((tmp->x <= 23) && (board->board[(uint8_t)(tmp->x + 32)] == VOID)) {
+							turns.push_back(Board::Turn(tmp, tmp->x, tmp->x + 32, board));
+							turns.push_back(Board::Turn(tmp, tmp->x, tmp->x + 16, board));
 						}
-						else { turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x, tmp->y - 1, board)); }
+						else turns.push_back(Board::Turn(tmp, tmp->x, tmp->x + 16, board));
 				
 				}
 				break;
 
 			case KNIGHT:
-				for (auto i : knight_moves) {
-					char tmp2 = board->board[coords(tmp->x + i[0], tmp->y + i[1])];
+				for (int8_t i : knight_moves) {
+					int8_t tmp2 = board->board[(uint8_t)(tmp->x + i)];
 					if(tmp2 == VOID)
-						turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x + i[0], tmp->y + i[1], board));
+						turns.push_back(Board::Turn(tmp, tmp->x, tmp->x + i, board));
 				}
 				break;
 
 			case BISHOP:
-				for (auto i : bishop_moves) {
-					bool clear_line = true; char j = 1;
+				for (int8_t i : bishop_moves) {
+					bool clear_line = true; int8_t j = 1;
 					while (clear_line) {
-						char tmp2 = board->board[coords(tmp->x + j * i[0], tmp->y + j * i[1])];
+						int8_t tmp2 = board->board[(uint8_t)(tmp->x + j * i)];
 						if (tmp2 == VOID) {
-							turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x + j * i[0], tmp->y + j * i[1], board));
+							turns.push_back(Board::Turn(tmp, tmp->x, tmp->x + j * i, board));
 							j++;
 						}
 						else {
@@ -53,12 +53,12 @@ void Game::GenerateMoves::operator()() {
 				break;
 
 			case ROOK:
-				for (auto i : rook_moves) {
-					bool clear_line = true; char j = 1;
+				for (int8_t i : rook_moves) {
+					bool clear_line = true; int8_t j = 1;
 					while (clear_line) {
-						char tmp2 = board->board[coords(tmp->x + j * i[0], tmp->y + j * i[1])];
+						int8_t tmp2 = board->board[(uint8_t)(tmp->x + j * i)];
 						if(tmp2 == VOID) {
-							turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x + j * i[0], tmp->y + j * i[1], board));
+							turns.push_back(Board::Turn(tmp, tmp->x, tmp->x + j * i, board));
 							j++;
 						}
 						else {
@@ -69,12 +69,12 @@ void Game::GenerateMoves::operator()() {
 				break;
 
 			case QUEEN:
-				for (auto i : queen_moves) {
+				for (int8_t i : queen_moves) {
 					bool clear_line = true; char j = 1;
 					while (clear_line) {
-						char tmp2 = board->board[coords(tmp->x + j * i[0], tmp->y + j * i[1])];
+						char tmp2 = board->board[(uint8_t)(tmp->x + j * i)];
 						if (tmp2 == VOID) {
-							turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x + j * i[0], tmp->y + j * i[1], board));
+							turns.push_back(Board::Turn(tmp, tmp->x, tmp->x + j * i, board));
 							j++;
 						}
 						else {
@@ -85,32 +85,32 @@ void Game::GenerateMoves::operator()() {
 				break;
 
 			case KING:
-				for (auto i : king_moves) {
-						char tmp2 = board->board[coords(tmp->x + i[0], tmp->y + i[1])];
+				for (int8_t i : king_moves) {
+						int8_t tmp2 = board->board[(uint8_t)(tmp->x + i)];
 						if(tmp2 == VOID)
-							turns.push_back(Board::Turn(tmp, tmp->x, tmp->y, tmp->x + i[0], tmp->y + i[1], board));
+							turns.push_back(Board::Turn(tmp, tmp->x, tmp->x + i, board));
 				}
 				if (color == WHITE_) {
-					if ((board->board[114] == KING_NM) && (board->board[117] == ROOK_NM) &&
-						(board->board[115] == VOID) && (board->board[116] == VOID)
-						&& !board->supercheck(4, 0) && !board->supercheck(5, 0)) {
+					if ((board->board[116] == KING_NM) && (board->board[119] == ROOK_NM) &&
+						(board->board[117] == VOID) && (board->board[118] == VOID)
+						&& !board->supercheck(116) && !board->supercheck(117)) {
 						turns.push_back(Board::Turn(SHORT_CASTLING, board));
 					}
-					if ((board->board[114] == KING_NM) && (board->board[110] == ROOK_NM) &&
-						(board->board[111] == VOID) && (board->board[112] == VOID) && (board->board[113] == VOID)
-						&& !board->supercheck(4, 0) && !board->supercheck(3, 0)) {
+					if ((board->board[116] == KING_NM) && (board->board[112] == ROOK_NM) &&
+						(board->board[113] == VOID) && (board->board[114] == VOID) && (board->board[115] == VOID)
+						&& !board->supercheck(116) && !board->supercheck(115)) {
 						turns.push_back(Board::Turn(LONG_CASTLING, board));
 					}
 				}
 				else {
-					if ((board->board[30] == BLACK*KING_NM) && (board->board[33] == BLACK*ROOK_NM) &&
-						(board->board[31] == VOID) && (board->board[32] == VOID)
-						&& !board->supercheck(4, 7) && !board->supercheck(5, 7)) {
+					if ((board->board[4] == BLACK*KING_NM) && (board->board[7] == BLACK*ROOK_NM) &&
+						(board->board[5] == VOID) && (board->board[6] == VOID)
+						&& !board->supercheck(4) && !board->supercheck(5)) {
 						turns.push_back(Board::Turn(SHORT_CASTLING, board));
 					}
-					if ((board->board[30] == BLACK * KING_NM) && (board->board[26] == BLACK * ROOK_NM) &&
-						(board->board[27] == VOID) && (board->board[28] == VOID) && (board->board[29] == VOID)
-						&& !board->supercheck(4, 7) && !board->supercheck(3, 7)) {
+					if ((board->board[4] == BLACK * KING_NM) && (board->board[0] == BLACK * ROOK_NM) &&
+						(board->board[1] == VOID) && (board->board[2] == VOID) && (board->board[3] == VOID)
+						&& !board->supercheck(4) && !board->supercheck(3)) {
 						turns.push_back(Board::Turn(LONG_CASTLING, board));
 					}
 				}

@@ -1,61 +1,62 @@
 #include "Board.h"
 
-bool Board::subcheck(char x, char y, char checking_x, char checking_y) {
-	char dx, dy;
-	if (x != checking_x) { dx = (x - checking_x) / abs(x - checking_x); }
-	else { dx = 0; }
-	if (y != checking_y) { dy = (y - checking_y) / abs(y - checking_y); }
-	else { dy = 0; }
+bool Board::subcheck(uint8_t x, uint8_t checking_x) {
+	int8_t X = abs((int8_t)checking_x - (int8_t)x), dx;
+	if (X < 8) dx = 1;
+	else
+		if (X % 16 == 0) dx = 16;
+		else if (X % 16 > 8) dx = 15;
+		else dx = 17;
+	dx *= (uint8_t)((int8_t)(checking_x - x) / X);
 
 	bool tmp = true;
-	for (int i = 1; i < std::max(abs(x - checking_x), abs(y - checking_y)); i++) {
-		tmp = tmp && (board[coords(checking_x + i * dx, checking_y + i * dy)] == VOID);
+	for (int i = 1; i < abs(X / dx); i++) {
+		tmp = tmp && (board[x + i * dx] == VOID);
 		if (not(tmp)) return tmp;
 	}
 
 	return tmp;
 }
 
-bool Board::check(const Chessman* checking_chessman, char checking_x, char checking_y) {
-	char x = checking_chessman->x - checking_x;
-	char y = checking_chessman->y - checking_y;
+bool Board::check(const Chessman* checking_chessman, uint8_t checking_x) {
+	int8_t x = checking_chessman->x - checking_x;
 
 	switch (checking_chessman->id) {
 
 	case PAWN: if (color_turn == BLACK) {
-				  return WHITE_PAWN_CHECK[check_coords(x, y)];
+				  return WHITE_PAWN_CHECK[check_coord(x)];
 				}
 			   else {
-				  return BLACK_PAWN_CHECK[check_coords(x, y)];
+				  return BLACK_PAWN_CHECK[check_coord(x)];
 				}
 
-	case KNIGHT: return KNIGHT_CHECK[check_coords(x, y)];
+	case KNIGHT: return KNIGHT_CHECK[check_coord(x)];
 
-	case BISHOP: if (BISHOP_CHECK[check_coords(x, y)]) {
-		return subcheck(checking_chessman->x, checking_chessman->y, checking_x, checking_y);
-	}
+	case BISHOP: if (BISHOP_CHECK[check_coord(x)]) {
+		return subcheck(checking_chessman->x, checking_x);
+	}	else return false;
 
-	case ROOK: if (ROOK_CHECK[check_coords(x, y)]) {
-		return subcheck(checking_chessman->x, checking_chessman->y, checking_x, checking_y);
-	}
+	case ROOK: if (ROOK_CHECK[check_coord(x)]) {
+		return subcheck(checking_chessman->x, checking_x);
+	}	else return false;
 
-	case QUEEN: if (QUEEN_CHECK[check_coords(x, y)]) {
-		return subcheck(checking_chessman->x, checking_chessman->y, checking_x, checking_y);
-	}
+	case QUEEN: if (QUEEN_CHECK[check_coord(x)]) {
+		return subcheck(checking_chessman->x, checking_x);
+	}	else return false;
 
-	case KING: return KING_CHECK[check_coords(x, y)];
+	case KING: return KING_CHECK[check_coord(x)];
 
 	default: return false;
 	}
 }
 
-bool Board::supercheck(char checking_x, char checking_y) {
+bool Board::supercheck(uint8_t checking_x) {
 	bool res = false;
 	for (int i = 0; i < NUMBER_OF_CHESSMEN; i++) {
 		if (res) { break; }
 		else {
 			Chessman *tmp = &chessmen[invert(color_turn)][i];
-			res = tmp->enabled && check(tmp, checking_x, checking_y); 
+			res = tmp->enabled && check(tmp, checking_x); 
 	}
 	}
 	return res;
