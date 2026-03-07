@@ -4,8 +4,8 @@ bool Board::subcheck(uint8_t x, uint8_t checking_x) {
 	int8_t X = abs((int8_t)checking_x - (int8_t)x), dx;
 	if (X < 8) dx = 1;
 	else
-		if (X % 16 == 0) dx = 16;
-		else if (X % 16 > 8) dx = 15;
+		if (X & 15 == 0) dx = 16; // X & 15 == X % 16
+		else if (X & 15 > 8) dx = 15;
 		else dx = 17;
 	dx *= (uint8_t)((int8_t)(checking_x - x) / X);
 

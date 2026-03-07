@@ -29,7 +29,7 @@ constexpr uint8_t WHITE_ = 0;
 constexpr uint8_t BLACK_ = 1;
 
 extern const uint64_t KEY[6][2][128];
-constexpr uint64_t START_KEY = 9223372036854775807;
+extern const uint64_t START_KEY;
 
 inline int8_t invert(int8_t color) {
 	return (-color & (uint8_t)2) >> 1;

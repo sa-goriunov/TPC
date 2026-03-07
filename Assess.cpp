@@ -2,9 +2,6 @@
 #include "Assess-Defines.h"
 
 int Board::assess() {
-	
-//	if (!chessmen[WHITE_][0].enabled) return -_INFINITY_;
-//	if (!chessmen[BLACK_][1].enabled) return _INFINITY_;
 
 	int res = 0;
 

@@ -3,7 +3,6 @@
 
 constexpr uint8_t KING_POSITION = 119;
 
-//TODO: change
 inline uint8_t check_coord(uint8_t x) {
 	return KING_POSITION + x;
 }

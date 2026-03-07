@@ -16,7 +16,7 @@ void Board::printTest() {
 		}
 		cout << endl;
 	}
-	//cout << zobrist << endl;
+	cout << zobrist << endl;
 }
 
 int main() {
