@@ -2,7 +2,6 @@
 #include <vector>
 #include <deque>
 #include "Chessman.h"
-#include "ZObrist-Defines.h"
 
 class Board {
 private:
@@ -14,8 +13,8 @@ public:
 	std::vector<Chessman> chessmen[2];
 	uint8_t pawns[2], pieces[2]; //pieces without kings and promoted pawns
 
-	unsigned __int64 zobrist;
-	std::deque<unsigned __int64> history;
+	uint64_t zobrist;
+	std::deque<uint64_t> history;
 
 	int8_t color_turn;
 	uint8_t en_passant = UNDEFINED;

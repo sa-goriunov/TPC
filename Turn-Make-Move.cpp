@@ -1,7 +1,5 @@
 #include "Turn.h"
 
-#include <iostream>
-
 void Board::Turn::operator()() {
 	switch (castling) {
 	case SHORT_CASTLING: 

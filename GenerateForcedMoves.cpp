@@ -1,8 +1,6 @@
 #include "GenerateMoves.h"
 #include "Generate-Defines.h"
 
-#include <iostream>
-
 void Game::GenerateForcedMoves::operator()() {
 	char color = same(board->color_turn);
 	for (int i = 0; i < NUMBER_OF_CHESSMEN; i++) {

@@ -1,6 +1,6 @@
+#include <string>
 #include "Sort-Defines.h"
 #include "Turn.h"
-#include <string>
 
 Board::Turn::Turn(std::string turn, Board* _board) {
 	board = _board;

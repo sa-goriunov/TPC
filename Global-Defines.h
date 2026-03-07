@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdint>
+#include <random>
 
 constexpr int8_t WHITE = 1;
 constexpr int8_t BLACK = -1;
@@ -23,6 +24,12 @@ constexpr uint8_t LONG_CASTLING = 2;
 constexpr uint8_t NUMBER_OF_CHESSMEN = 16;
 
 constexpr uint8_t UNDEFINED = 255;
+
+constexpr uint8_t WHITE_ = 0;
+constexpr uint8_t BLACK_ = 1;
+
+extern const uint64_t KEY[6][2][128];
+constexpr uint64_t START_KEY = 9223372036854775807;
 
 inline int8_t invert(int8_t color) {
 	return (-color & (uint8_t)2) >> 1;

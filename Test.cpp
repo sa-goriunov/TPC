@@ -21,6 +21,7 @@ void Board::printTest() {
 
 int main() {
 	Game game;
+
 	cout << "DEPTH:";
 	int depth; cin >> depth; game.setDepth(depth);
 	cout << "MAX_DEPTH:";
